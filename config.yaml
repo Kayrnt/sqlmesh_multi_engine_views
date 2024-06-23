@@ -1,0 +1,58 @@
+gateways:
+  local:
+    variables:
+      poc_schema: "my_schema"
+    connection:
+        type: duckdb
+        database: local_connection.db
+    state_connection:
+        type: duckdb
+        database: local_state.db
+    test_connection:
+        type: duckdb
+        database: test.db
+  mysql:
+    variables:
+      #poc_catalog: "my_db"
+      poc_schema: "my_schema"
+    connection:
+        type: mysql
+        host: localhost
+        user: root
+        password: ""
+        port: 3306
+    # state_connection: # it doesn't work with DuckDB as state connection so far
+    #     type: duckdb
+    #     database: mysql_connection.db
+  bq:
+    variables:
+      # catalog is provided by connection.project
+      poc_schema: "sqlmesh_cou"
+    connection:
+        type: bigquery
+        project: {{ env_var('STORAGE_PROJECT') }}
+        execution_project: {{ env_var('EXECUTION_PROJECT') }}
+        method: oauth
+    state_connection:
+        type: duckdb
+        database: bq_connection.db
+
+  spark:
+    variables:
+      poc_schema: "my_schema"
+    connection:
+        type: spark
+    state_connection:
+        type: mysql
+        host: localhost
+        user: root
+        password: ""
+        port: 3306
+    # state_connection: # it doesn't work with DuckDB as state connection so far
+    #     type: duckdb
+    #     database: spark_connection.db
+
+default_gateway: local
+
+model_defaults:
+  dialect: bigquery
